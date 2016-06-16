@@ -1,0 +1,7 @@
+require 'test/unit'
+require_relative 'test_command_processor'
+require_relative 'test_config'
+require_relative 'test_github_repo'
+require_relative 'test_git_util'
+require_relative 'test_validator'
+require_relative 'test_validator_changelog'
