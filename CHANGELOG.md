@@ -1,6 +1,11 @@
 Releasinator release notes
 ==========================
 
+0.5.1
+-----
+* Add an extra newline when adding lines to `.gitignore`.
+
+
 0.5.0
 -----
 * The releasinator is now Open Source!

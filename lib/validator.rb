@@ -140,6 +140,7 @@ module Releasinator
       if !line_match_in_file?(line, ".gitignore")
         is_git_already_clean = GitUtil.is_clean_git?
         File.open('.gitignore', 'a') do |f|
+          f.puts
           f.puts line
         end
 
