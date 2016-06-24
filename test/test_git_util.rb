@@ -23,6 +23,8 @@ class TestGitUtil < Test::Unit::TestCase
       assert_true(GitUtil.has_branch? "blah")
       GitUtil.delete_branch "blah"
       assert_false(GitUtil.has_branch? "blah")
+      assert_true(GitUtil.exist? "CHANGELOG.md")
+      assert_false(GitUtil.exist? "changelog.md")
     end 
   end
 end

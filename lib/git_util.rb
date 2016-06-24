@@ -14,6 +14,12 @@ module Releasinator
       CommandProcessor.command("git fetch origin --prune --recurse-submodules -j9")
     end
 
+    def self.exist?(path)
+      current_branch = get_current_branch()
+      # grep is case sensitive, which is what we want.  Piped to cat so the grep error code is ignored.
+      "" != CommandProcessor.command("git ls-tree --name-only -r #{current_branch} | grep ^#{path}$ | cat")
+    end
+
     def self.push_branch(branch_name)
       checkout(branch_name)
       fetch()
