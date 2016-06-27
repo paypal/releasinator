@@ -1,9 +1,9 @@
 Releasinator release notes
 ==========================
 
-0.5.1
+0.6.0
 -----
-* Add an extra newline when adding lines to `.gitignore`.
+* Add new task, `validate:eof_newlines` which validates text files matching a few known extensions end in a newline character.  The validation adds the newline character if not present.
 * Validate files are in git with the proper name, case sensitive.  Previously, the releasinator would allow files detected by the filesystem.  Since Macs are case in-sensitive, incorrect cases were allowed.
 
 0.5.0

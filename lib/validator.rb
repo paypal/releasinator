@@ -31,6 +31,19 @@ module Releasinator
       end
     end
 
+    def validate_eof_newlines
+      all_git_files = GitUtil.all_files.split
+      text_file_extensions = [".md", ".txt", ".gitignore", "Gemfile", "Gemfile.lock", "LICENSE", "Rakefile", ".rb"]
+
+      important_git_text_files = all_git_files.select{ 
+        |filename| text_file_extensions.any? { |extension| filename.end_with?(extension) }
+      }
+
+      important_git_text_files.each do |filename|
+        CommandProcessor.command("tail -c1 #{filename} | read -r _ || echo >> #{filename}")
+      end
+    end
+
     def validate_in_path(executable)
       if "" == CommandProcessor.command("which #{executable} | cat")
         Printer.fail(executable.bold + " not found on path.")
@@ -140,7 +153,6 @@ module Releasinator
       if !line_match_in_file?(line, ".gitignore")
         is_git_already_clean = GitUtil.is_clean_git?
         File.open('.gitignore', 'a') do |f|
-          f.puts
           f.puts line
         end
 

@@ -20,6 +20,11 @@ module Releasinator
       "" != CommandProcessor.command("git ls-tree --name-only -r #{current_branch} | grep ^#{path}$ | cat")
     end
 
+    def self.all_files()
+      current_branch = get_current_branch()
+      CommandProcessor.command("git ls-tree --name-only -r #{current_branch}")
+    end
+
     def self.move(old_path, new_path)
       puts "Renaming #{old_path} to #{new_path}".yellow
       CommandProcessor.command("git mv -f #{old_path} #{new_path}")

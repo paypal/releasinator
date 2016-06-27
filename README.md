@@ -34,6 +34,7 @@ release
 
 --> validate:all
     --> validate:paths
+    --> validate:eof_newlines
     --> validate:git_version
     --> validate:gitignore
     --> validate:submodules
@@ -122,9 +123,11 @@ The releasinator enforces certain conventions.  If a filename closely matches th
 
 ## Behind the Scenes
 
-#### Validations
+#### Validations (in no particular order)
 
+1. ✓ Validate releasinator version.
 1. ✓ Validate git version.
+1. ✓ Validate text files end in newline characters.
 1. ✓ Validate git's cleanliness (no untracked, unstaged, or uncommitted files).
 1. ✓ Validate current git branch is up to date with the latest version on server.
 1. ✓ Validate current git branch is `master` (if no git flow), or `develop` or `release/<Release number>` if using git flow.

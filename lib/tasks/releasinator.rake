@@ -34,7 +34,12 @@ namespace :validate do
     @downstream.freeze
   end
 
-  desc "validate that git is the correct version"
+  desc "validate important text files end in a newline character"
+  task :eof_newlines => :config do
+    @validator.validate_eof_newlines
+  end
+
+  desc "validate releasinator is up to date"
   task :releasinator_version => :config do
     @validator.validate_releasinator_version
   end
@@ -50,7 +55,7 @@ namespace :validate do
     @validator.validate_git_version
   end
 
-  desc "validate that git reports no untracked, unstaged, or uncommitted changes"
+  desc "validate git reports no untracked, unstaged, or uncommitted changes"
   task :git => :config do
     @validator.validate_clean_git
   end
@@ -124,6 +129,7 @@ namespace :validate do
   task :all =>
     [
       :paths,
+      :eof_newlines,
       :git_version,
       :gitignore,
       :submodules,
