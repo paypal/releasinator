@@ -54,9 +54,9 @@ module Releasinator
       end
     end
 
-    def validate_changelog(downstream_dir)
+    def validate_changelog(search_ignore_path=nil)
       validate_base_dir
-      validate_exist(@releasinator_config.base_dir, "CHANGELOG.md", downstream_dir, ["release_notes.md"])
+      validate_exist(@releasinator_config.base_dir, "CHANGELOG.md", search_ignore_path, ["release_notes.md"])
 
       changelog_contents = get_changelog_contents
       ValidatorChangelog.new(@releasinator_config).validate_changelog_contents(changelog_contents)
@@ -180,7 +180,7 @@ module Releasinator
       abort()
     end
 
-    def validate_exist(dir, expected_file_name, downstream_dir, alternate_names=[])
+    def validate_exist(dir, expected_file_name, search_ignore_path=nil, alternate_names=[])
       if !File.exist? dir
         Printer.fail("Directory #{dir} not found.")
         abort()
@@ -192,11 +192,11 @@ module Releasinator
         
           # search for files that are somewhat similar to the file being searched, ignoring case
           filename_prefix = expected_file_name[0,5]
-          similar_files = CommandProcessor.command("find . -type f -not -path \"./#{downstream_dir}/*\" -iname '#{filename_prefix}*'| sed 's|./||'").strip
+          similar_files = CommandProcessor.command("find . -type f -not -path \"./#{search_ignore_path}/*\" -iname '#{filename_prefix}*'| sed 's|./||'").strip
           num_similar_files = similar_files.split.count
           puts similar_files
           if num_similar_files == 1
-            Printer.check_proceed("Found a single similar file: #{similar_files}.  Do you want to rename this to the expected #{expected_file_name}?","Please place #{dir}/#{expected_file_name}")
+            Printer.check_proceed("Found a single similar file: #{similar_files}.  Do you want to rename this to the expected #{expected_file_name}?","Please commit #{dir}/#{expected_file_name}")
             rename_file(similar_files, expected_file_name)
           elsif num_similar_files > 1
             Printer.fail("Found more than 1 file similar to #{expected_file_name}.  Please rename one, and optionally remove the others to not confuse users.")
