@@ -4,7 +4,7 @@ Releasinator release notes
 0.5.1
 -----
 * Add an extra newline when adding lines to `.gitignore`.
-
+* Validate files are in git with the proper name, case sensitive.  Previously, the releasinator would allow files detected by the filesystem.  Since Macs are case in-sensitive, incorrect cases were allowed.
 
 0.5.0
 -----

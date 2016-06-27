@@ -17,6 +17,54 @@ class TestValidator < Test::Unit::TestCase
     @temp_gitignore.unlink
   end
 
+  # shamelessly copied from https://rubyplus.com/articles/2541-TDD-Beyond-Basics-How-to-Fake-User-Input
+  class VirtualInput
+    def initialize(strings)
+      @strings = strings
+    end
+
+    def gets
+      next_string = @strings.shift
+      # Uncomment the following line if you'd like to see the faked $stdin#gets
+      puts "(DEBUG) Faking #gets with: #{next_string}"
+      next_string
+    end
+
+    def self.with_fake_input(strings)
+      $stdin = VirtualInput.new(strings)
+      yield
+    ensure
+      $stdin = STDIN
+    end
+  end
+
+  def test_validate_exists_success
+    assert_nothing_raised do
+      @validator.validate_exist(".", "CHANGELOG.md")
+      @validator.validate_exist(".", "README.md")
+    end
+  end
+
+  def test_validate_exists_fail
+    assert_raises(SystemExit) {
+      VirtualInput.with_fake_input(["n"]) do
+        @validator.validate_exist(".", "changelog.md")
+      end
+    }
+
+    assert_raises(SystemExit) {
+      VirtualInput.with_fake_input(["n"]) do
+        @validator.validate_exist(".", "readme.md")
+      end
+    }
+
+    assert_raises(SystemExit) {
+      VirtualInput.with_fake_input(["n"]) do
+        @validator.validate_exist(".", "asdfasdfa")
+      end
+    }
+  end
+
   def test_validate_in_path
     assert_nothing_raised do
       @validator.validate_in_path("ls")

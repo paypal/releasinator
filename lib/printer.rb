@@ -12,7 +12,7 @@ module Releasinator
 
     def self.check_proceed(warning_msg, abort_msg)
       puts "#{warning_msg}  Continue?  (Y/n)".yellow
-      if 'n' == STDIN.gets.strip
+      if 'n' == $stdin.gets.strip
         self.fail(abort_msg)
         abort()
       end

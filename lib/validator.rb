@@ -187,7 +187,7 @@ module Releasinator
       end
       
       Dir.chdir(dir) do
-        if !File.exist?(expected_file_name)
+        if !GitUtil.exist?(expected_file_name)
           puts "#{dir}/#{expected_file_name} not found. Searching for similar files.".yellow
         
           # search for files that are somewhat similar to the file being searched, ignoring case
@@ -202,7 +202,7 @@ module Releasinator
             Printer.fail("Found more than 1 file similar to #{expected_file_name}.  Please rename one, and optionally remove the others to not confuse users.")
             abort()
           elsif !rename_alternate_name(expected_file_name, alternate_names)
-            Printer.fail("Please place #{dir}/#{expected_file_name}.") 
+            Printer.fail("Please commit #{dir}/#{expected_file_name}.")
             abort()
           end
         end
@@ -353,8 +353,7 @@ module Releasinator
     def rename_file(old_name, new_name)
       is_git_already_clean = GitUtil.is_clean_git?
 
-      puts "Renaming #{old_name} to expected filename: #{new_name}".yellow
-      CommandProcessor.command("mv #{old_name} #{new_name}")
+      GitUtil.move(old_name, new_name)
       # fix any references to file in readme
       replace_string("README.md", "(#{old_name})", "(#{new_name})")
       if is_git_already_clean
