@@ -154,10 +154,14 @@ module Releasinator
               if downstream_repo.options.has_key? :new_branch_name
                 new_branch_name = get_new_branch_name(downstream_repo.options[:new_branch_name], @current_release.version)
                 CommandProcessor.command("git push -u origin #{new_branch_name}")
+                # TODO - check that the branch exists
+                CommandProcessor.command("sleep 5")
                 Publisher.new(@releasinator_config).publish_pull_request(downstream_repo.url, @current_release, @releasinator_config[:product_name], downstream_repo.branch, new_branch_name)
               else
                 GitUtil.push_branch("master")
                 GitUtil.push_tag(@current_release.version)
+                # TODO - check that the tag exists
+                CommandProcessor.command("sleep 5")
                 Publisher.new(@releasinator_config).publish(downstream_repo.url, @current_release) unless ! downstream_repo.release_to_github
               end
             end
