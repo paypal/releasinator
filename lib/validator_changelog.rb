@@ -94,8 +94,24 @@ module Releasinator
 
       validate_semver(changelog_hash)
 
+      changelog_hash.each { |release, changelog| 
+        validate_single_changelog_entry(changelog)
+      }
+
       latest_release, latest_release_changelog = changelog_hash.first
       CurrentRelease.new(latest_release, latest_release_changelog)
+    end
+
+    def validate_single_changelog_entry(entry)
+      lines = entry.split(/\r?\n/)
+      lines.each{ |line| 
+        if line.match /^\s*\*\s+.*$/ # regex matches bulleted points
+          if !line.match /^\s*\*\s+.*[\!,\?:\.]$/ # regex matches bullet points with punctuation
+            Printer.fail("'#{line}' is invalid.  Bulleted points should end in punctuation.")
+            abort()
+          end
+        end
+      }
     end
   end
 end

@@ -42,6 +42,23 @@ class TestValidatorChangelog < Test::Unit::TestCase
     assert_raises(SystemExit) {@validator_changelog.validate_semver({ "99.99.99" => "", "1.0.0" => "" })}
   end
 
+  def test_validate_bullets_success
+    assert_nothing_raised do
+      @validator_changelog.validate_single_changelog_entry("* contents.")
+      @validator_changelog.validate_single_changelog_entry("* contents?")
+      @validator_changelog.validate_single_changelog_entry("* contents:")
+      @validator_changelog.validate_single_changelog_entry("* contents,")
+      @validator_changelog.validate_single_changelog_entry("* contents!")
+    end 
+  end
+
+  def test_validate_bullets_fail
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents with extra space after period. ")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("      * whitespace tabbed asterix contents")}
+  end
+
+
   def test_validate_semver_w_prefix_success
     assert_nothing_raised do
       @validator_changelog.validate_semver({ "v1.0.1" => "", "v1.0.0" => "" })
@@ -55,7 +72,7 @@ class TestValidatorChangelog < Test::Unit::TestCase
     assert_raises(SystemExit) {@validator_changelog.validate_semver("v1.0.1" => "", "1.0.0" => "" )}
     assert_raises(SystemExit) {@validator_changelog.validate_semver("1.0.1" => "", "v1.0.0" => "" )}
     assert_raises(SystemExit) {@validator_changelog.validate_semver("v1.0.1" => "", "version1.0.0" => "" )}
-      @validator_changelog.validate_semver({ "v1.1.1-beta" => "", "v1.1.1" => "" })
+    assert_raises(SystemExit) {@validator_changelog.validate_semver("v1.1.1-beta" => "", "v1.1.1" => "" )}
   end
 
   def test_validate_changelog_contents_empty
@@ -79,36 +96,6 @@ class TestValidatorChangelog < Test::Unit::TestCase
       contents += "\n\n1.1.1\n----\ncontents"
       contents += "\n\n1.1.0\n----\ncontents"
       expected_current_release = CurrentRelease.new("1.1.2", "contents")
-      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
-      assert_equal(expected_current_release.version, actual_current_release.version)
-      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
-    end
-  end
-
-  def test_validate_changelog_contents_braintree_android
-    assert_nothing_raised do
-      contents = open("https://raw.githubusercontent.com/braintree/braintree_android/64fdfab4e221dc96101a2766734014b5917252da/CHANGELOG.md").read
-      expected_current_release = CurrentRelease.new("2.2.4", "* Update PayPalDataCollector to 3.1.1\n* Fixes\n  * Update device collector to 2.6.1 (fixes [#87](https://github.com/braintree/braintree_android/issues/87))\n  * Fix crash when `BraintreeFragment` has not been attached to an `Activity`\n* Features\n  * Add `PaymentRequest#defaultFirst` option\n  * Add support for Chrome Custom tabs when browser switching")
-      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
-      assert_equal(expected_current_release.version, actual_current_release.version)
-      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
-    end
-  end
-
-  def test_validate_changelog_contents_paypal_android_sdk
-    assert_nothing_raised do
-      contents = open("https://raw.githubusercontent.com/paypal/PayPal-Android-SDK/f24d8a69250ab30b1a3c15a5cb28d3446c009976/CHANGELOG.md").read
-      expected_current_release = CurrentRelease.new("2.14.1", "* Update card.io to 5.3.2.\n* Add proguard config to aar file.\n* Minor bug fixes.")
-      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
-      assert_equal(expected_current_release.version, actual_current_release.version)
-      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
-    end
-  end
-
-  def test_validate_changelog_contents_paypal_java_sdk
-    assert_nothing_raised do
-      contents = open("https://raw.githubusercontent.com/paypal/PayPal-Java-SDK/ee0cef9194406984baefed6a32205e691e163612/CHANGELOG.md").read
-      expected_current_release = CurrentRelease.new("v1.4.2", "   * Fix null pointer exception. Fixes #150")
       actual_current_release = @validator_changelog.validate_changelog_contents(contents)
       assert_equal(expected_current_release.version, actual_current_release.version)
       assert_equal(expected_current_release.changelog, actual_current_release.changelog)
