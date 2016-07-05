@@ -200,7 +200,7 @@ module Releasinator
       
       Dir.chdir(dir) do
         if !GitUtil.exist?(expected_file_name)
-          puts "#{dir}/#{expected_file_name} not found. Searching for similar files.".yellow
+          puts "#{dir}/#{expected_file_name} not found using a case sensitive search within git, searching for similar files...".yellow
         
           # search for files that are somewhat similar to the file being searched, ignoring case
           filename_prefix = expected_file_name[0,5]
