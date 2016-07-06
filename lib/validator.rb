@@ -33,7 +33,38 @@ module Releasinator
 
     def validate_eof_newlines
       all_git_files = GitUtil.all_files.split
-      text_file_extensions = [".md", ".txt", ".gitignore", "Gemfile", "Gemfile.lock", "LICENSE", "Rakefile", ".rb"]
+      text_file_extensions = [
+        ".md",
+        ".txt",
+        ".ini",
+        ".in",
+        ".xml",
+        ".gitignore",
+        ".npmignore",
+        ".html",
+        ".css",
+        ".h",
+        "Gemfile",
+        "Gemfile.lock",
+        ".rspec",
+        ".gemspec",
+        ".podspec",
+        ".rb",
+        ".java",
+        ".php",
+        ".py",
+        ".js",
+        ".yaml",
+        ".json",
+        ".sh",
+        ".gemspec",
+        ".gradle",
+        ".settings",
+        ".properties",
+        "LICENSE",
+        "Rakefile"
+        # TODO include C# file types
+      ]
 
       important_git_text_files = all_git_files.select{ 
         |filename| text_file_extensions.any? { |extension| filename.end_with?(extension) }
