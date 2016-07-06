@@ -4,6 +4,7 @@ Releasinator release notes
 0.6.1
 -----
 * Improve some error messages.
+* Add more filetypes to `validate:eof_newlines`.
 
 0.6.0
 -----
