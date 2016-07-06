@@ -101,15 +101,24 @@ module Releasinator
     end
 
     def self.get_local_head_sha1
-      CommandProcessor.command("git rev-parse --verify head").strip
+      rev_parse("head")
     end
 
     def self.get_local_branch_sha1(branch_name)
-      CommandProcessor.command("git rev-parse --verify #{branch_name}").strip
+      rev_parse(branch_name)
     end
 
     def self.get_remote_branch_sha1(branch_name)
-      CommandProcessor.command("git rev-parse --verify origin/#{branch_name}").strip
+      rev_parse("origin/#{branch_name}")
+    end
+
+    def self.rev_parse(branch_name)
+      output = CommandProcessor.command("git rev-parse --verify #{branch_name} 2>&1 | cat").strip
+      if output.include? 'fatal: Needed a single revision'
+        puts "error: branch or commit '#{branch_name}' does not exist. You may need to checkout this branch.".red
+        abort()
+      end
+      output
     end
 
     def self.tag(new_tag, changelog)
