@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.6.1
+-----
+* Improve some error messages.
+
 0.6.0
 -----
 * Validate all bulleted items in `CHANGELOG.md` end in punctuation.
