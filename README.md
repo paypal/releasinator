@@ -115,11 +115,12 @@ This will 'append' the task `validate:changelog`, running the code block after t
 The releasinator enforces certain conventions.  If a filename closely matches the convention, it is renamed and automatically committed.  The conventions are documented below:
 
 1. `README.md`
-2. `LICENSE`: See [here](http://stackoverflow.com/questions/5678462/should-i-provide-a-license-txt-or-copying-txt-file-in-my-project) for a relevant StackOverflow post on this discussion.  This project has chosen to exclude the `.txt` extension to match other popular projects, and GitHub defaults.
-3. `CONTRIBUTING.md`: See [a relevant GitHub blog post](https://github.com/blog/1184-contributing-guidelines) for relevant information.  This project has chosen to include the `.md` extension, as these files can get a bit unwieldy without formatting.
+2. `LICENSE`: See [here](http://stackoverflow.com/questions/5678462/should-i-provide-a-license-txt-or-copying-txt-file-in-my-project) for a relevant StackOverflow post on this discussion.  The authors of this project have chosen to exclude the `.txt` extension to match other popular projects, and GitHub defaults.
+3. `CONTRIBUTING.md`: See [a relevant GitHub blog post](https://github.com/blog/1184-contributing-guidelines) for relevant information.  The authors of this project have have chosen to include the `.md` extension, as these files can get a bit unwieldy without formatting.
 4. `CHANGELOG.md` - This file is the source of truth for the releasinator.  The file should be organized with the most recent release on top, and formatted correctly.  The latest release is the one used when the releasinator executes, so it is a precondition that the `CHANGELOG.md` has been edited and committed **prior to releasing**.
   1. Releases either are contained within an Alt-H2 (`------`) or `##H2` format.  Any other format will be rejected.
   2. Each release MUST start with the release version, and may contain any following text, such as the date, and/or any release summary.
+5. `.gitignore` and `.DS_store`: While this file is Mac-specific, many repos contain this entry in their `.gitignore` files because it's quite common for developers to not have their global `.gitignore` configured correctly. Therefore, the authors of this project have made the decision to force this entry in all `.gitignores`, as a gesture of goodwill to all these new git users.
 
 ## Behind the Scenes
 
