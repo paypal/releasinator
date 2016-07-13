@@ -106,15 +106,13 @@ module Releasinator
       previous_line_in_progress = nil
 
       lines = entry.split(/\r?\n/)
-      lines.each{ |line| 
-        starts_with_bullet = starts_with_bullet? line
-        ends_with_punctuation = ends_with_punctuation? line
-        
-        if starts_with_bullet
+      lines.each{ |line|
+
+        if starts_with_bullet? line
           if previous_line_in_progress
             Printer.fail("'#{previous_line_in_progress}' is invalid.  Bulleted points should end in punctuation.")
             abort()
-          elsif ends_with_punctuation
+          elsif ends_with_punctuation? line
             # self-contained line is a-ok, and the usual use-case
             previous_line_in_progress = nil
           else
@@ -123,7 +121,7 @@ module Releasinator
           end
         elsif previous_line_in_progress
           # does not start with bullet, and is continuing from previous line
-          if ends_with_punctuation
+          if ends_with_punctuation? line
             # multi-line ending with punctuation is ok!
             previous_line_in_progress = nil
           else
