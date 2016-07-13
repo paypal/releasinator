@@ -108,7 +108,6 @@ module Releasinator
         if line.match /^\s*\*\s+.*$/ # regex matches bulleted points
           if !line.match /^\s*\*\s+.*[\!,\?:\.]$/ # regex matches bullet points with punctuation
             Printer.fail("'#{line}' is invalid.  Bulleted points should end in punctuation.")
-            abort()
           end
         end
       }

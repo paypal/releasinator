@@ -5,6 +5,7 @@ Releasinator release notes
 -----
 * Improve some error messages.
 * Add more filetypes to `validate:eof_newlines`.
+* Disable bullet punctuation detection until multi-line comments can be addressed.
 
 0.6.0
 -----
