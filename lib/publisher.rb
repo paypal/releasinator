@@ -5,8 +5,8 @@ require_relative 'printer'
 
 module Releasinator
   class Publisher
-    def initialize(config)
-      @config = config
+    def initialize(releasinator_config)
+      @releasinator_config = releasinator_config
     end
 
     def publish(repo_url, release)
@@ -18,7 +18,7 @@ module Releasinator
           release.version,
           :name => release.version,
           :body => release.changelog
-        puts github_release.inspect if @config[:trace]
+        puts github_release.inspect if @releasinator_config[:trace]
       rescue => error
         #This will fail if the user does not have push permissions.
         Printer.fail(error.inspect)
@@ -46,7 +46,7 @@ module Releasinator
           head,
           "Update #{product_name} to #{release.version}",
           release.changelog
-        puts github_pull_request.inspect if @config[:trace]
+        puts github_pull_request.inspect if @releasinator_config[:trace]
       rescue => error
         #This will fail if there's already a pull request
         Printer.fail(error.inspect)

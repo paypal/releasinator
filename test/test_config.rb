@@ -4,15 +4,15 @@ require_relative "../lib/config_hash"
 class TestConfig < Test::Unit::TestCase
   include Releasinator
   def setup
-    @config = ConfigHash.new(false, false)
+    @releasinator_config = ConfigHash.new(false, false)
   end
 
   def teardown
   end
 
   def test_validate_config
-    assert_equal("releasinator", @config[:releasinator_name])
-    assert_false(@config[:trace])
-    assert_false(@config[:verbose])
+    assert_equal("releasinator", @releasinator_config[:releasinator_name])
+    assert_false(@releasinator_config[:trace])
+    assert_false(@releasinator_config[:verbose])
   end
 end
