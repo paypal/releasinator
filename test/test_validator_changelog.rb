@@ -49,13 +49,17 @@ class TestValidatorChangelog < Test::Unit::TestCase
       @validator_changelog.validate_single_changelog_entry("* contents:")
       @validator_changelog.validate_single_changelog_entry("* contents,")
       @validator_changelog.validate_single_changelog_entry("* contents!")
+      @validator_changelog.validate_single_changelog_entry("* multiline \n success.")
+      @validator_changelog.validate_single_changelog_entry("* In CocoaPods, add subspecs to allow PayPal SDK to be used without card.io. By\n  default, all libraries are included. If you do not want to use card.io, use the `Core` subspec like `PayPal-iOS-SDK/Core` in your Podfile. See the \n SampleApp without card.io to see how you can setup your application without\n  credit card scanning. See [issue #358](https://github.com/paypal/PayPal-iOS-SDK/issues/358).\n * Update to use NSURLSession whenever possible. Falls back to NSURLConnection for iOS 6.")
     end 
   end
 
   def test_validate_bullets_fail
-    #assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents")}
-    #assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents with extra space after period. ")}
-    #assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("      * whitespace tabbed asterix contents")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* contents with extra space after period. ")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("      * whitespace tabbed asterix contents")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* multiline \nfail")}
+    assert_raises(SystemExit) {@validator_changelog.validate_single_changelog_entry("* multiline \n multibullet \n * failure.")}
   end
 
 

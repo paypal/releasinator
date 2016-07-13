@@ -103,14 +103,51 @@ module Releasinator
     end
 
     def validate_single_changelog_entry(entry)
+      previous_line_in_progress = nil
+
       lines = entry.split(/\r?\n/)
       lines.each{ |line| 
-        if line.match /^\s*\*\s+.*$/ # regex matches bulleted points
-          if !line.match /^\s*\*\s+.*[\!,\?:\.]$/ # regex matches bullet points with punctuation
-            Printer.fail("'#{line}' is invalid.  Bulleted points should end in punctuation.")
+        starts_with_bullet = starts_with_bullet? line
+        ends_with_punctuation = ends_with_punctuation? line
+        
+        if starts_with_bullet
+          if previous_line_in_progress
+            Printer.fail("'#{previous_line_in_progress}' is invalid.  Bulleted points should end in punctuation.")
+            abort()
+          elsif ends_with_punctuation
+            # self-contained line is a-ok, and the usual use-case
+            previous_line_in_progress = nil
+          else
+            # line starts with bullet, but did not end with punctuation
+            previous_line_in_progress = line
           end
+        elsif previous_line_in_progress
+          # does not start with bullet, and is continuing from previous line
+          if ends_with_punctuation
+            # multi-line ending with punctuation is ok!
+            previous_line_in_progress = nil
+          else
+            # middle of multi-line - neither starts with punctuation, nor ends with punctuation.
+            previous_line_in_progress = line
+          end
+        else
+          # don't care about empty or code lines interspersed in a changelog entry
         end
       }
+
+      # the last line may not be clean.  Handle it.
+      if previous_line_in_progress
+        Printer.fail("'#{previous_line_in_progress}' is invalid.  Bulleted points should end in punctuation.")
+        abort()
+      end
+    end
+
+    def starts_with_bullet?(line)
+      line.match /^\s*\*\s+.*$/
+    end
+
+    def ends_with_punctuation?(line)
+      line.match /.*[\!,\?:\.]$/
     end
   end
 end

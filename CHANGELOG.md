@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.6.2
+-----
+* Re-enable bullet punctuation detection, now handling multi-line comments correctly!
+
 0.6.1
 -----
 * Improve some error messages.
