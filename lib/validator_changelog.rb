@@ -127,7 +127,7 @@ module Releasinator
             # multi-line ending with punctuation is ok!
             previous_line_in_progress = nil
           else
-            # middle of multi-line - neither starts with punctuation, nor ends with punctuation.
+            # middle of multi-line - neither starts with bullet, nor ends with punctuation.
             previous_line_in_progress = line
           end
         else
