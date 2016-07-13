@@ -74,6 +74,8 @@ release
     --> docs:package
     --> docs:push
 
+import:changelog (utility that creates a CHANGELOG.md.tmp from existing GitHub releases)
+
 ```
 
 ### Config

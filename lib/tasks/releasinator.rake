@@ -11,6 +11,7 @@ require_relative '../downstream'
 require_relative '../downstream_repo'
 require_relative '../publisher'
 require_relative '../validator'
+require_relative '../changelog/importer.rb'
 
 include Releasinator
 
@@ -152,6 +153,13 @@ end
 desc "release all"
 task :release => [:"validate:all",:"local:build",:"pm:all",:"downstream:all",:"local:push",:"docs:all"] do
   Printer.success("Done releasing.")
+end
+
+namespace :import do
+  desc "import a changelog from release notes contained within GitHub releases"
+  task :changelog => [:config] do
+    Changelog::Importer.new(@releasinator_config).import(GitUtil.repo_url)
+  end
 end
 
 namespace :local do

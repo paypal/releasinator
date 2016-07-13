@@ -4,6 +4,7 @@ Releasinator release notes
 0.6.2
 -----
 * Re-enable bullet punctuation detection, now handling multi-line comments correctly!
+* Add new utility task, `import:changelog` for creating a changelog from a GitHub repo using the contents of existing GitHub releases.
 
 0.6.1
 -----
