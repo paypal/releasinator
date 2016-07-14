@@ -10,7 +10,7 @@ module Releasinator
       end
 
       def import(repo_url)
-        # TODO create tempfile 
+        # create tempfile 
         File.open('CHANGELOG.md.tmp', 'w') do |f|
           title_string = "#{@releasinator_config[:product_name]} release notes"
           f.puts title_string

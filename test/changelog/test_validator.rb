@@ -1,14 +1,14 @@
 require "test/unit"
 require 'tempfile'
 require 'open-uri'
-require_relative "../lib/validator_changelog"
+require_relative "../../lib/changelog/validator"
  
-class TestValidatorChangelog < Test::Unit::TestCase
+class TestChangelogValidator < Test::Unit::TestCase
   include Releasinator
   
   def setup
     config = {:verbose => false}
-    @validator_changelog = ValidatorChangelog.new(config)
+    @validator_changelog = Changelog::Validator.new(config)
 
     @temp_changelog = Tempfile.new("TestValidatorChangelog.changelog")
   end

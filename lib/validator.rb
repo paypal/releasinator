@@ -6,7 +6,7 @@ require_relative 'command_processor'
 require_relative 'downstream_repo'
 require_relative 'github_repo'
 require_relative 'printer'
-require_relative 'validator_changelog'
+require_relative 'changelog/validator'
 require_relative 'releasinator/version'
 
 TEXT_FILE_EXTENSIONS = [
@@ -108,7 +108,7 @@ module Releasinator
       validate_exist(@releasinator_config.base_dir, "CHANGELOG.md", search_ignore_path, ["release_notes.md"])
 
       changelog_contents = get_changelog_contents
-      ValidatorChangelog.new(@releasinator_config).validate_changelog_contents(changelog_contents)
+      Changelog::Validator.new(@releasinator_config).validate_changelog_contents(changelog_contents)
     end
 
     def validate_is_type(obj, type)
