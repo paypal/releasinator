@@ -105,7 +105,7 @@ module Releasinator
     def validate_single_changelog_entry(entry)
       previous_line_in_progress = nil
 
-      lines = entry.split(/\r?\n/)
+      lines = entry.chomp.split(/\r?\n/)
       lines.each{ |line|
 
         if starts_with_bullet? line
