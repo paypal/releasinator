@@ -4,7 +4,7 @@
 
 ## Problem
 
-When automating a release process for libraries, SDKs, apps, or other open source projects, many teams have different ideas.  This is on top of the fact that each language has its own conventions and repositories for distributing packages.  The release process is a hurdle that makes it hard for new project members to ramp up.  One shouldn't have to read a `release_process.md` to release an open source project.
+When automating a release process for libraries, SDKs, apps, or other open source projects, many teams have different ideas.  This is on top of the fact that each language has its own conventions and repositories for distributing packages.  The release process is a hurdle that makes it hard for new project members to ramp up.  One should not have to read a `release_process.md` to release an open source project.
 
 ## Solution
 
@@ -110,7 +110,7 @@ task :"validate:changelog" do
   puts "validating changelog complete, let's dance!".red
 end
 ```
-This will 'append' the task `validate:changelog`, running the code block after the official releasinator task contents have run.  See [this blog post](http://www.dan-manges.com/blog/modifying-rake-tasks) for a detailed description of how this mechanism works.  You may append a task more than once.
+This will append the task `validate:changelog`, running the code block after the official releasinator task contents have run.  See [this blog post](http://www.dan-manges.com/blog/modifying-rake-tasks) for a detailed description of how this mechanism works.  You may append a task more than once.
 
 ## Conventions
 
@@ -122,7 +122,7 @@ The releasinator enforces certain conventions.  If a filename closely matches th
 4. `CHANGELOG.md` - This file is the source of truth for the releasinator.  The file should be organized with the most recent release on top, and formatted correctly.  The latest release is the one used when the releasinator executes, so it is a precondition that the `CHANGELOG.md` has been edited and committed **prior to releasing**.
   1. Releases either are contained within an Alt-H2 (`------`) or `##H2` format.  Any other format will be rejected.
   2. Each release MUST start with the release version, and may contain any following text, such as the date, and/or any release summary.
-5. `.gitignore` and `.DS_store`: While this file is Mac-specific, many repos contain this entry in their `.gitignore` files because it's quite common for developers to not have their global `.gitignore` configured correctly. Therefore, the authors of this project have made the decision to force this entry in all `.gitignores`, as a gesture of goodwill to all these new git users.
+5. `.gitignore` and `.DS_store`: While this file is Mac-specific, many repos contain this entry in their `.gitignore` files because it is quite common for developers to have their global `.gitignore` configured incorrectly. Therefore, the authors of this project have made the decision to force this entry in all `.gitignore` files as a gesture of goodwill to all these new git users.
 
 ## Behind the Scenes
 
@@ -182,7 +182,7 @@ The releasinator enforces certain conventions.  If a filename closely matches th
 9. ✓ Push to external repo (once live in external package manager).
 10. ✓ Create PRs into any downstream dependencies, including the release notes in the PR.  Examples:
     
-    * Create a PR into Cordova when there's an Android or iOS release.
+    * Create a PR into Cordova when there is an Android or iOS release.
     * Create a PR into any other framework that has a direct dependency on this repo.
 
 11. Using the downstream methods, one can add those same release notes within the release notes of the downstream repo.
