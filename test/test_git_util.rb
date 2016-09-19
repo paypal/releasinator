@@ -25,6 +25,9 @@ class TestGitUtil < Test::Unit::TestCase
       assert_false(GitUtil.has_branch? "blah")
       assert_true(GitUtil.exist? "CHANGELOG.md")
       assert_false(GitUtil.exist? "changelog.md")
+      
+      assert_true(GitUtil.is_ancestor? "master", "master")
+      assert_false(GitUtil.is_ancestor? "master", "gh-pages")
     end 
   end
 end

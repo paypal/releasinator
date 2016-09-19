@@ -121,6 +121,10 @@ module Releasinator
       output
     end
 
+    def self.is_ancestor?(root_branch, child_branch)
+      "0" == CommandProcessor.command("git merge-base --is-ancestor #{root_branch} #{child_branch}; echo $?").strip
+    end
+
     def self.tag(new_tag, changelog)
       confirm_tag_overwrite(new_tag)
       puts "tagging with changelog: \n\n#{changelog}\n".yellow
