@@ -359,6 +359,14 @@ module Releasinator
           abort()
         end
 
+        # validate that develop is an ancestor of release branch.  Warn if not, but allow user to proceed, as this may be desired for maintenance releases.
+        if current_branch == expected_release_branch
+          root_branch = "develop"
+          if !GitUtil.is_ancestor?(root_branch, current_branch)
+            Printer.check_proceed("#{current_branch} is missing commits from #{root_branch}.  Are you sure you want to continue?", "Please rebase #{current_branch} to include the latest from #{root_branch}.")
+          end
+        end
+
         # validate that master is up to date, because git flow requires this.
         validate_local_matches_remote("master")
       else
