@@ -86,7 +86,7 @@ module Releasinator
         end
         
         if changelog_hash.empty?
-          Printer.fail("Unable to find any releases in the CHANGELOG.md.  Please check that your formatting is correct.")
+          Printer.fail("Unable to find any releases in the CHANGELOG.md.  Please check that the formatting is correct.")
           abort()
         end
         
@@ -110,8 +110,7 @@ module Releasinator
 
           if starts_with_bullet? line
             if previous_line_in_progress
-              Printer.fail("'#{previous_line_in_progress}' is invalid.  Bulleted points should end in punctuation.")
-              abort()
+              fail_punctuation(previous_line_in_progress)
             elsif ends_with_punctuation? line
               # self-contained line is a-ok, and the usual use-case
               previous_line_in_progress = nil
@@ -135,8 +134,8 @@ module Releasinator
 
         # the last line may not be clean.  Handle it.
         if previous_line_in_progress
-          Printer.fail("'#{previous_line_in_progress}' is invalid.  Bulleted points should end in punctuation.")
-          abort()
+          fail_punctuation(previous_line_in_progress)
+
         end
       end
 
@@ -146,6 +145,11 @@ module Releasinator
 
       def ends_with_punctuation?(line)
         line.match /.*[\!,\?:\.]$/
+      end
+
+      def fail_punctuation(line)
+        Printer.fail("'#{line}' is invalid.  Bulleted points should end in punctuation and no trailing line whitespace.")
+        abort()
       end
     end
   end

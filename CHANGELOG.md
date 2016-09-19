@@ -4,6 +4,7 @@ Releasinator release notes
 0.6.3
 -----
 * When using git flow, validate the release branch is an ancestor of the develop branch.  User must confirm a warning if is not.
+* Update some error messages.
 
 0.6.2
 -----
