@@ -1,5 +1,5 @@
 require 'colorize'
-require 'Vandamme'
+require 'vandamme'
 require 'semantic'
 require_relative "../current_release"
 require_relative '../printer'
