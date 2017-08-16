@@ -216,7 +216,7 @@ module Releasinator
       Dir.chdir(@releasinator_config.base_dir) do
         File.open("README.md", "r") do |f|
           f.each_line do |line|
-            if line.include? "(#{filename})"
+            if line.include?("(#{filename})") or line.include?("(./#{filename})")
               Printer.success("#{filename} referenced in #{@releasinator_config.base_dir}/README.md")
               return
             end
