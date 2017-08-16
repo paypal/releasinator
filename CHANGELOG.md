@@ -1,6 +1,11 @@
 Releasinator release notes
 ==========================
 
+0.6.4
+-----
+* Remove unused 'fileutils' dependency.
+* Allow LICENSE links in README.md to be relative.
+
 0.6.3
 -----
 * When using git flow, validate the release branch is an ancestor of the develop branch.  User must confirm a warning if is not.
