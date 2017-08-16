@@ -1,5 +1,4 @@
 require 'colorize'
-require 'fileutils'
 require 'net/http'
 require 'json'
 require_relative 'command_processor'
