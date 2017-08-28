@@ -14,6 +14,18 @@ end
 # The command that builds the project.  Required.
 configatron.build_method = method(:build_method)
 
+def update_version_method(version, semver_type)
+  # semver_regex = /^version = "\d+.\d+.\d+"$/
+  # contents = File.read("setup.py")
+  # contents = contents.gsub(semver_regex, "version = \"\#{version}\"")
+  # File.open("setup.py", "w") do |f|
+  #   f << contents
+  # end
+end
+
+# The command that populates a new version to all relevant files.  Recommended.
+# configatron.update_version_method = method(:update_version_method)
+
 def publish_to_package_manager(version)
   abort("please implement publish_to_package_manager method")
 end

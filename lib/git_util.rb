@@ -1,4 +1,5 @@
 require_relative 'command_processor'
+require 'semantic'
 
 module Releasinator
   class GitUtil
@@ -151,6 +152,53 @@ module Releasinator
           CommandProcessor.command("git push -u origin gh-pages")
         end
       end
+    end
+
+    def self.tags(remote=false)
+      if remote
+        CommandProcessor.command("git ls-remote --tags").split("\n")
+          .map { |tag| tag.split()[1].strip.gsub("refs/tags/", "") }
+          .keep_if { |tag| !tag.include? "{}" }
+      else
+        CommandProcessor.command("git tag --list").split("\n")
+      end
+    end
+
+    def self.tagged_versions(remote=false)
+      version_reg = Semantic::Version::SemVerRegexp
+      tags = self.tags(remote)
+
+      tags.map { |tag|
+        if tag.start_with? "v"
+          tag = tag[1..tag.size]
+        end
+
+        if tag =~ version_reg
+          tag
+        end
+      }.compact
+    end
+
+    def self.stage(files=".")
+      CommandProcessor.command("git add #{files}")
+    end
+
+    def self.commit(message)
+      CommandProcessor.command("git commit -m'#{message}'")
+    end
+
+    def self.reset_head(hard=false)
+      CommandProcessor.command("git reset#{' --hard' if hard} HEAD")
+    end
+
+    def self.commits(from_tag=nil, to_tag="HEAD")
+      rev = ""
+      if from_tag
+        rev = "#{from_tag}..#{to_tag}"
+      end
+
+      # Format: [short hash] [date] [commit message] ([author])
+      CommandProcessor.command("git log #{rev} --pretty=format:'%h %ad%x20%s%x20%x28%an%x29' --date=short").split("\n").reverse!
     end
   end
 end

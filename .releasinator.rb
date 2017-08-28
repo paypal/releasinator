@@ -1,3 +1,5 @@
+require 'releasinator/version'
+
 configatron.product_name = "Releasinator"
 
 # List of items to confirm from the person releasing.  Required, but empty list is ok.
@@ -5,7 +7,6 @@ configatron.prerelease_checklist_items = [
 ]
 
 def validate_version_match()
-  require 'releasinator/version'
   spec_version = Releasinator::VERSION
   if spec_version != @current_release.version
     Printer.fail("Ruby gem spec version #{spec_version} does not match changelog version #{@current_release.version}.")
@@ -48,6 +49,17 @@ end
 
 # The command that builds the project.  Required.
 configatron.build_method = method(:build_method)
+
+def update_version_method(version, semver_type)
+  version_file = "lib/releasinator/version.rb"
+
+  text = File.read(version_file)
+  replace = text.gsub(Releasinator::VERSION, version)
+  File.open(version_file, "w") {|file| file.puts replace}
+end
+
+# The command that populates a new version to all relevant files.  Required.
+configatron.update_version_method = method(:update_version_method)
 
 def publish_to_package_manager(version)
   output_dir = "build"

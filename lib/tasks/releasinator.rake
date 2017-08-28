@@ -11,7 +11,8 @@ require_relative '../downstream'
 require_relative '../downstream_repo'
 require_relative '../publisher'
 require_relative '../validator'
-require_relative '../changelog/importer.rb'
+require_relative '../changelog/importer'
+require_relative '../changelog/updater'
 
 include Releasinator
 
@@ -28,7 +29,7 @@ end
 
 namespace :validate do
   desc "validate the presence, formatting, and semver sequence of CHANGELOG.md"
-  task :changelog => :config do
+  task :changelog => [:config, :git] do
     @current_release = @validator.validate_changelog(DOWNSTREAM_REPOS)
     @current_release.freeze
     @downstream = Downstream.new(@releasinator_config, @validator, @current_release)
@@ -150,9 +151,63 @@ namespace :validate do
   end
 end
 
+desc "Update release version and CHANGELOG"
+task :update_version_and_changelog do
+  begin
+    Changelog::Updater.bump_version do |version, semver_type|
+      @releasinator_config[:update_version_method].call(version, semver_type)
+      Changelog::Updater.prompt_for_change_log(version, semver_type)
+
+      GitUtil.stage
+      if @releasinator_config.has_key? :update_version_commit_message
+        GitUtil.commit(@releasinator_config[:update_version_commit_message])
+      else
+        GitUtil.commit("Update version and CHANGELOG.md for #{version}")
+      end
+    end
+  rescue Exception => e
+    GitUtil.reset_head(true)
+    Printer.fail("Failed to update version: #{e}")
+    abort()
+  end
+end
+
 desc "release all"
-task :release => [:"validate:all",:"local:build",:"pm:all",:"downstream:all",:"local:push",:"docs:all"] do
-  Printer.success("Done releasing.")
+task :release => [:"validate:all"] do
+  last_tag = GitUtil.tagged_versions(true).last
+
+  if !last_tag.nil? # If last tag is nil, at this point, there must be changelog entry, but this is the first releasinator release, proceed.
+    last_tag = Semantic::Version.new(last_tag)
+    commits_since_tag = GitUtil.commits(last_tag)
+    if commits_since_tag.size > 0 # There are new commits to be released
+      if @current_release.version > last_tag # CHANGELOG.md version is ahead of last tag. The releaser has already updated the changelog, and we've valdidated it
+        if !Printer.ask_binary("The version from CHANGELOG.md '#{@current_release.version}' is greater than the last tagged version '#{last_tag}'. Have you already updated your version and CHANGELOG.md?")
+          Printer.fail("Update your version and CHANGELOG.md and re-run rake release.")
+          abort()
+        end
+      elsif @releasinator_config.has_key? :update_version_method
+        if Printer.ask_binary("It doesn't look like your CHANGELOG.md has been updated. HEAD is #{commits_since_tag.size} commits ahead of tag #{last_tag}. Do you want to update CHANGELOG.md and version now?")
+          Rake::Task[:update_version_and_changelog].invoke
+          Rake::Task[:"validate:changelog"].reenable
+          Rake::Task[:"validate:changelog"].invoke
+        else
+          Printer.fail("Update your version and CHANGELOG.md and re-run rake release.")
+          abort()
+        end
+      else
+        Printer.fail("It doesn't look like your CHANGELOG.md has been updated. HEAD is #{commits_since_tag.size} commits ahead of last tagged version '#{last_tag}'. Please update CHANGELOG.md or implement update_version_method in .releasinator.rb to allow releasinator to perform this step on your behalf. See https://github.com/paypal/releasinator for more details.")
+        abort()
+      end
+    elsif !Printer.ask_binary("There are no new commits since last tagged version '#{last_tag}'. Are you sure you want to release?")
+      abort()
+    end
+  end
+
+  [:"local:build",:"pm:all",:"downstream:all",:"local:push",:"docs:all"].each do |task|
+    Rake::Task[task].invoke
+  end
+
+  Printer.success("Done releasing #{@current_release.version}")
 end
 
 namespace :import do
@@ -348,9 +403,8 @@ namespace :docs do
 end
 
 def replace_string(filepath, string_to_replace, new_string)
-  IO.write(filepath,
-    File.open(filepath) do |file|
-      file.read.gsub(string_to_replace, new_string)
-    end
-  )
+  text = File.read(filepath)
+  new_contents = text.gsub(string_to_replace, new_string)
+
+  File.open(filepath, "w") {|file| file.puts new_contents }
 end
