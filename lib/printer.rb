@@ -17,5 +17,25 @@ module Releasinator
         abort()
       end
     end
+
+    def self.ask(msg)
+      puts msg.yellow
+      $stdin.gets.chomp.downcase
+    end
+
+    def self.ask_binary(msg)
+      answer = self.ask("#{msg} (Y/n)")
+
+      while answer != "y" && answer != "n" do
+        puts "Please answer y or n".red
+        answer = self.ask("#{msg} (Y/n)")
+      end
+
+      return answer == "y"
+    end
+
+    def self.comment(msg)
+      puts msg.yellow
+    end
   end
 end

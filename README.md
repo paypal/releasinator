@@ -100,6 +100,8 @@ A [default config file](lib/default_config.rb) is created when running any relea
 5. `configatron.doc_build_method`: The method that builds the docs.
 6. `configatron.doc_target_dir`: The directory where to run all git commands when publishing the docs.  If not specified, the default is `.`.  Generally useful if the docs are only applicable on a downstream release, rather than on the source itself.
 7. `configatron.doc_files_to_copy`: List of CopyFile objects for copying built docs into a targeted location.  Please see documentation on the `CopyFile` class.
+8. `configatron.update_version_method`: Takes a new version, and populates to all relevant files. Only called if not first release, and updating version in-flow (see below).
+9. `configatron.update_version_commit_message`: The commit message used after updating the CHANGELOG and version. Only used if not first release, and updating version in-flow (see below).
 
 #### Appending existing tasks in the releasinator lifecycle:
 
@@ -110,6 +112,7 @@ task :"validate:changelog" do
   puts "validating changelog complete, let's dance!".red
 end
 ```
+
 This will append the task `validate:changelog`, running the code block after the official releasinator task contents have run.  See [this blog post](http://www.dan-manges.com/blog/modifying-rake-tasks) for a detailed description of how this mechanism works.  You may append a task more than once.
 
 ## Conventions
@@ -124,6 +127,20 @@ The releasinator enforces certain conventions.  If a filename closely matches th
   2. Each release MUST start with the release version, and may contain any following text, such as the date, and/or any release summary.
   3. Releases MUST not skip versions (such as `1.0.0 -> 1.0.2`, or `1.0.2 -> 1.1.1`).  That is, if you skip or botch a release, it MUST be documented as an official release with a minimal description suggesting that this release is not actually available, or was skipped. This is for the benefit future maintainers of the repo to know that certain releases were not actually published or are not to be used (for whatever reason). In addition, external developers benefit when they look to upgrade versions and want to know what changes were made since a particular release. They can rest at ease knowing that there are no unaccounted-for releases. 
 5. `.gitignore` and `.DS_store`: While this file is Mac-specific, many repos contain this entry in their `.gitignore` files because it is quite common for developers to have their global `.gitignore` configured incorrectly. Therefore, the authors of this project have made the decision to force this entry in all `.gitignore` files as a gesture of goodwill to all these new git users.
+
+## Inline updating of version and `CHANGELOG.md`
+
+For your first release, the releasinator expects that the `CHANGELOG.md` contains an initial entry and that the initial version is placed as appropriate in relevant files.
+
+For subsequent releases, the releasinator can handle updating the `CHANGELOG.md` and version numbers as part of the release flow. If you'd like to update your `CHANGELOG.md` and version manually, ensure that your release's `CHANGELOG.md` entry and version updates in any relevant files are pushed to your remote prior to releasing.
+
+The releasinator will ask during the release flow whether or not to update the `CHANGELOG.md` and versions. If so, it:
+
+1. Checks the `CHANGELOG.md` for the most recently released version.
+2. Prompts for the type of release (major, minor, or patch).
+3. Increments the version number accordingly, and passes it to `configatron.update_version_method`, for you to update relevant files.
+4. Opens an editor and prompts you to provide a `CHANGELOG.md` entry.
+5. Updates the `CHANGELOG.md` accordingly.
 
 ## Behind the Scenes
 
