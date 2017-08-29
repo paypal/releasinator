@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.7.0
+-----
+* Optionally update version and CHANGELOG.md inline.
+
 0.6.4
 -----
 * Remove unused 'fileutils' dependency.
