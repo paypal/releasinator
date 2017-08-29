@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.7.1
+-----
+* Prompt user on first release.
+
 0.7.0
 -----
 * Optionally update version and CHANGELOG.md inline.
