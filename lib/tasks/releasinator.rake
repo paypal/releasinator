@@ -201,6 +201,8 @@ task :release => [:"validate:all"] do
     elsif !Printer.ask_binary("There are no new commits since last tagged version '#{last_tag}'. Are you sure you want to release?")
       abort()
     end
+  elsif !Printer.ask_binary("This release (#{@current_release.version}) is the first release. Do you want to continue?")
+    abort()
   end
 
   [:"local:build",:"pm:all",:"downstream:all",:"local:push",:"docs:all"].each do |task|
