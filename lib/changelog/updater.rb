@@ -8,7 +8,7 @@ module Releasinator
   module Changelog
     class Updater
 
-      def self.bump_version(version=GitUtil.tags.last)
+      def self.bump_version(version)
         loop do
           term = Printer.ask("What type of release is this? (major, minor, patch)")
 

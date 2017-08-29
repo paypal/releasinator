@@ -154,7 +154,7 @@ end
 desc "Update release version and CHANGELOG"
 task :update_version_and_changelog do
   begin
-    Changelog::Updater.bump_version do |version, semver_type|
+    Changelog::Updater.bump_version(@current_release.version) do |version, semver_type|
       @releasinator_config[:update_version_method].call(version, semver_type)
       Changelog::Updater.prompt_for_change_log(version, semver_type)
 
