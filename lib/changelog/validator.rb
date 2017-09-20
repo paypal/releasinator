@@ -21,6 +21,7 @@ module Releasinator
 
         newer_version = nil
         changelog_hash.each do |key,value|
+
           prefix, version, suffix = key.partition(RELEASE_REGEX)
           puts "Checking version with prefix:'#{prefix}', version:'#{version}', suffix:'#{suffix}'." if @releasinator_config[:verbose]
           if prefix != latest_release_prefix
@@ -66,24 +67,10 @@ module Releasinator
       end
 
       def validate_changelog_contents(changelog_contents)
-        version_header_regexes = [
-          ## h2 using --- separator.  Example:
-          #  1.0.0
-          #  -----
-          #  First release!
-          '(^#{RELEASE_REGEX}).*\n----.*',
-
-          # h1/h2 header retrieved from https://github.com/tech-angels/vandamme/#format and modified to skip headers with dots in the name
-          '^#{0,3} ?([\w\d\.-]+\.[\d\.-]+[a-zA-Z0-9])(?: \W (\w+ \d{1,2}(?:st|nd|rd|th)?,\s\d{4}|\d{4}-\d{2}-\d{2}|\w+))?\n?[=-]*'
-        ]
-
-        changelog_hash = nil
-        version_header_regexes.each do |version_header_regex|
-          parser = Vandamme::Parser.new(changelog: changelog_contents, version_header_exp: version_header_regex, format: 'markdown')
-          changelog_hash = parser.parse
-
-          break if !changelog_hash.empty?
-        end
+        # Modified version of Vandamme::Parser::DEFAULT_REGEX to disallow versions with leading alpha characters
+        changelog_regex = Regexp.new('^#{0,3} ?([\d\.-]+\.[\w\d\.-]+[a-zA-Z0-9])(?: \W (\w+ \d{1,2}(?:st|nd|rd|th)?,\s\d{4}|\d{4}-\d{2}-\d{2}|\w+))?\n?[=-]*')
+        parser = Vandamme::Parser.new(changelog: changelog_contents, version_header_exp: changelog_regex, format: 'markdown')
+        changelog_hash = parser.parse
         
         if changelog_hash.empty?
           Printer.fail("Unable to find any releases in the CHANGELOG.md.  Please check that the formatting is correct.")
