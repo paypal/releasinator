@@ -19,6 +19,7 @@ class TestChangelogValidator < Test::Unit::TestCase
 
   def test_validate_semver_success
     assert_nothing_raised do
+      @validator_changelog.validate_semver({ "1.0.0-beta.1" => "", "1.0.0-beta.0" => "" })
       @validator_changelog.validate_semver({ "1.0.1" => "", "1.0.0" => "" })
       @validator_changelog.validate_semver({ "1.1.0" => "", "1.0.1" => "" })
       @validator_changelog.validate_semver({ "1.1.1" => "", "1.1.0" => "" })
@@ -85,7 +86,7 @@ class TestChangelogValidator < Test::Unit::TestCase
     assert_raises(SystemExit) {@validator_changelog.validate_changelog_contents("")}
   end
 
-  def test_validate_changelog_contents_one
+  def test_validate_changelog_contents_one_dash_format
     assert_nothing_raised do
       contents = "1.1.1\n----\ncontents"
       expected_current_release = CurrentRelease.new("1.1.1", "contents")
@@ -95,12 +96,50 @@ class TestChangelogValidator < Test::Unit::TestCase
     end
   end
 
-  def test_validate_changelog_contents_multi
+  def test_validate_changelog_contents_one_header_format
+    assert_nothing_raised do
+      contents = "## 1.1.1\ncontents"
+      expected_current_release = CurrentRelease.new("1.1.1", "contents")
+      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
+      assert_equal(expected_current_release.version, actual_current_release.version)
+      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
+    end
+  end
+
+  def test_validate_changelog_contents_multi_dash_format
     assert_nothing_raised do
       contents = "Project.name.with dot in HEADER\n==========\n\n"
-      contents += "1.1.2\n----\ncontents"
+      contents += "1.1.2-beta.0\n----\ncontents"
       contents += "\n\n1.1.1\n----\ncontents"
       contents += "\n\n1.1.0\n----\ncontents"
+      expected_current_release = CurrentRelease.new("1.1.2-beta.0", "contents")
+      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
+      assert_equal(expected_current_release.version, actual_current_release.version)
+      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
+    end
+  end
+
+  def test_validate_changelog_contents_multi_header_format
+    assert_nothing_raised do
+      contents = "Project.name.with dot in HEADER\n==========\n\n"
+      contents += "## 1.1.2-beta.0\ncontents"
+      contents += "\n\n## 1.1.1\ncontents"
+      contents += "\n\n## 1.1.0\ncontents"
+      expected_current_release = CurrentRelease.new("1.1.2-beta.0", "contents")
+      actual_current_release = @validator_changelog.validate_changelog_contents(contents)
+      assert_equal(expected_current_release.version, actual_current_release.version)
+      assert_equal(expected_current_release.changelog, actual_current_release.changelog)
+    end
+  end
+
+  def test_validate_changelog_contents_multi_correct_sorting
+    assert_nothing_raised do
+      contents = "Project.name.with dot in HEADER\n==========\n\n"
+      contents += "## 1.1.2\ncontents"
+      contents += "\n\n## 1.1.2-beta.1\ncontents"
+      contents += "\n\n## 1.1.2-beta.0\ncontents"
+      contents += "\n\n## 1.1.1\ncontents"
+      contents += "\n\n## 1.1.0\ncontents"
       expected_current_release = CurrentRelease.new("1.1.2", "contents")
       actual_current_release = @validator_changelog.validate_changelog_contents(contents)
       assert_equal(expected_current_release.version, actual_current_release.version)
