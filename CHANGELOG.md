@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.7.2
+-----
+* Fix changelog parsing regex to support beta/prerelease tags.
+
 0.7.1
 -----
 * Prompt user on first release.
