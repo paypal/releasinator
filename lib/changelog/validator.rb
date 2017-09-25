@@ -68,20 +68,20 @@ module Releasinator
 
       def validate_changelog_contents(changelog_contents)
         # Modified version of Vandamme::Parser::DEFAULT_REGEX to disallow versions with leading alpha characters
-        changelog_regex = Regexp.new('^#{0,3} ?([\d\.-]+\.[\w\d\.-]+[a-zA-Z0-9])(?: \W (\w+ \d{1,2}(?:st|nd|rd|th)?,\s\d{4}|\d{4}-\d{2}-\d{2}|\w+))?\n?[=-]*')
+        changelog_regex = Regexp.new('^#{0,3} ?(v?[\d\.-]+\.[\w\d\.-]+[a-zA-Z0-9])(?: \W (\w+ \d{1,2}(?:st|nd|rd|th)?,\s\d{4}|\d{4}-\d{2}-\d{2}|\w+))?\n?[=-]*')
         parser = Vandamme::Parser.new(changelog: changelog_contents, version_header_exp: changelog_regex, format: 'markdown')
         changelog_hash = parser.parse
-        
+
         if changelog_hash.empty?
           Printer.fail("Unable to find any releases in the CHANGELOG.md.  Please check that the formatting is correct.")
           abort()
         end
-        
+
         Printer.success("Found " + changelog_hash.count.to_s.bold + " release(s) in CHANGELOG.md.")
 
         validate_semver(changelog_hash)
 
-        changelog_hash.each { |release, changelog| 
+        changelog_hash.each { |release, changelog|
           validate_single_changelog_entry(changelog)
         }
 
