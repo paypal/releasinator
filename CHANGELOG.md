@@ -3,7 +3,7 @@ Releasinator release notes
 
 0.7.5
 -----
-* Use clean semantic version for doing comparisions instead of "vX.Y.Z"
+* Use clean semantic version for doing comparisions instead of "vX.Y.Z".
 
 0.7.4
 -----
