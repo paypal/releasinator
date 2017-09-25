@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.7.6
+-----
+* Add hack to cleanup "vX.Y.Z" to semantic version for CHANGELOG detection.
+
 0.7.5
 -----
 * Use clean semantic version for doing comparisions instead of "vX.Y.Z".
