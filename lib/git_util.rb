@@ -164,18 +164,18 @@ module Releasinator
       end
     end
 
-    def self.tagged_versions(remote=false)
+    def self.tagged_versions(remote=false, raw_tags=false)
       version_reg = Semantic::Version::SemVerRegexp
       tags = self.tags(remote)
 
-      tags.map { |tag|
-        if tag.start_with? "v"
+      tags.select { |tag|
+        tag = tag[1..tag.size] if tag.start_with? "v"
+        tag =~ version_reg
+      }.map { |tag|
+        if !raw_tags and tag.start_with? "v"
           tag = tag[1..tag.size]
         end
-
-        if tag =~ version_reg
-          tag
-        end
+        tag
       }.compact
     end
 

@@ -1,7 +1,7 @@
 require "test/unit"
 require "mocha/test_unit"
 require_relative "../lib/git_util"
- 
+
 class TestGitUtil < Test::Unit::TestCase
   include Releasinator
   def setup
@@ -70,6 +70,30 @@ class TestGitUtil < Test::Unit::TestCase
         assert_false tag.start_with? 'v'
       end
       assert_equal('1.6.7+pre1', tagged_versions.last)
+    end
+
+    CommandProcessor.unstub(:tags)
+  end
+
+  def test_tagged_versions_raw_values
+    fake_tags = <<-EOF
+    abcd    refs/tags/v1.2.0
+    abcd    refs/tags/1.3.0
+    abcd    refs/tags/1.4.2-beta1
+    abcd    refs/tags/v1.6.7+pre1
+    abcd    refs/tags/some_tag
+    EOF
+
+    CommandProcessor.expects(:command).with("git ls-remote --tags").returns(fake_tags)
+
+    assert_nothing_raised do
+      tagged_versions = GitUtil.tagged_versions(remote=true, raw_tags=true)
+      assert_equal([
+        "v1.2.0",
+        "1.3.0",
+        "1.4.2-beta1",
+        "v1.6.7+pre1"
+      ], tagged_versions)
     end
 
     CommandProcessor.unstub(:tags)
