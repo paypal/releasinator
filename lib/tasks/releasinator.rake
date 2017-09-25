@@ -175,12 +175,16 @@ end
 desc "release all"
 task :release => [:"validate:all"] do
   last_tag_raw = GitUtil.tagged_versions(remote=true, raw_tags=true).last
+  last_tag = last_tag_raw
+  last_tag = last_tag[1..last_tag.size] if last_tag.start_with? "v"
 
   if !last_tag_raw.nil? # If last tag is nil, at this point, there must be changelog entry, but this is the first releasinator release, proceed.
     commits_since_tag = GitUtil.commits(last_tag_raw)
-    last_tag = Semantic::Version.new(GitUtil.tagged_versions(remote=true).last)
+    last_tag = Semantic::Version.new(last_tag)
     if commits_since_tag.size > 0 # There are new commits to be released
-      if @current_release.version > last_tag # CHANGELOG.md version is ahead of last tag. The releaser has already updated the changelog, and we've validated it
+      current_version = @current_release.version
+      current_version = current_version[1..current_version.size] if current_version.start_with? "v"
+      if current_version > last_tag # CHANGELOG.md version is ahead of last tag. The releaser has already updated the changelog, and we've validated it
         if !Printer.ask_binary("The version from CHANGELOG.md '#{@current_release.version}' is greater than the last tagged version '#{last_tag}'. Have you already updated your version and CHANGELOG.md?")
           Printer.fail("Update your version and CHANGELOG.md and re-run rake release.")
           abort()
