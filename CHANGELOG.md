@@ -1,6 +1,10 @@
 Releasinator release notes
 ==========================
 
+0.7.4
+-----
+* Fix tagged version parsing to support getting the raw tag value.
+
 0.7.3
 -----
 * Fix changelog parsing regex to support "vX.Y.Z" version names.
